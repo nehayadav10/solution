@@ -1,0 +1,73 @@
+﻿@model PairingTest.Web.Models.QuestionnaireViewModel
+<style>
+    div#test {
+        border: #000 1px solid;
+        padding: 10px 40px 40px 40px;
+    }
+
+    h2#testStatus {
+        text-align: center;
+        padding: 20px 20px 20px 20px;
+    }
+</style>
+<html>
+
+<head>
+    <title>@Model.QuestionnaireTitle</title>
+    <script src=@Url.Content("~/Scripts/jquery-1.10.2.min.js") type="text/javascript"></script>
+</head>
+
+<body>
+
+    <h2 id="testStatus"></h2>
+    <div id="test">
+        @* Here we can use razor also to bind the questions to UI and a submit button.with submit attribute.
+            however we don't have a model in place to take the answers also. *@
+    </div>
+
+
+</body>
+</html>
+<script type="text/javascript">
+    var quesArray = [], pos = 0, test, question, answer, answerArray = [];
+    (function () {
+        //here I could have called the webapi with ajax and had all the questions without interacting with mdel directly.
+        @foreach (var d in Model.QuestionsText)
+        {
+            @:quesArray.push("@d");
+                                                                    }
+        renderQuestion();
+    })();
+
+    function getId(x) { return document.getElementById(x); };
+    function renderQuestion() {
+        test = getId("test");
+        if (pos >= quesArray.length) {
+            alert('you are done with your test');
+            alert('Saving to Database Implementation is Pending');
+            test.innerHTML = "TEST COMPLETED";
+            return false;
+        }
+        getId("testStatus").innerHTML = "Questions " + (pos + 1) + " of " + quesArray.length;
+        question = quesArray[pos];
+        test.innerHTML = (pos + 1) + ") " + question + "</br></br>";
+        test.innerHTML += '<input type="text" name="answer" id="answer' + (pos + 1) + '" />' + "</br></br>";
+        test.innerHTML += '<input type="button" id="btnSubmit" onclick="checkanswer()" value="Next"/>';
+    };
+    function checkanswer() {
+        var id = "answer" + (pos + 1);
+        answer = getId(id);
+        if (answer.value != "" && answer.value.length > 0) {
+            answerArray.push({
+                question: quesArray[pos],
+                answer: answer.value
+            });
+            pos++;
+            renderQuestion();
+        } else {
+            alert('Please fill the answer');
+        }
+    }
+
+
+</script>
